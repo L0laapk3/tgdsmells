@@ -4,16 +4,16 @@ with open("README.md", "r") as readme_file:
     long_description = readme_file.read()
 
 setup(
-    name="tmcp",
-    packages=["tmcp"],
+    name="tgdsmells",
+    packages=["tgdsmells"],
     version="1.0.0",
     license="MIT",
-    description="Helper classes for the Team Match Communication Protocol.",
+    description="Helper classes for the Team Group Data Sharing Medium & Electronic Local Link System.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Viliam Vadocz",
     author_email="viliam.vadocz@gmail.com",
-    url="https://github.com/ViliamVadocz/tmcp/",
+    url="https://github.com/L0laapk3/tgdsmells/",
     download_url="https://github.com/ViliamVadocz/tmcp/archive/v_1_0_0.tar.gz",
     keywords=["RLBot", "protocol"],
     install_requires=["rlbot"],

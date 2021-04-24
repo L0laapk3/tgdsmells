@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from tmcp import TMCP_VERSION
+from tgdsmells import TGDSMELLS_VERSION
 from .convert import try_convert_direction
 from .type_check import type_check
 
@@ -14,9 +14,9 @@ class ActionType(Enum):
     DEFEND = "DEFEND"
 
 
-class TMCPMessage:
+class TGDSMELLSMessage:
     """
-    A TMCP compliant message object.
+    A TGDSMELLS compliant message object.
     All messages contain a `team`, `index`, and `action_type`.
     
     Based on the `action_type`, this object will have other attributes.
@@ -34,7 +34,7 @@ class TMCPMessage:
     @type_check
     def ball_action(
         cls, team: int, index: int, time: float = -1.0, direction = [0.0, 0.0, 0.0]
-    ):  # -> TMCPMessage:
+    ):  # -> TGDSMELLSMessage:
         self = cls(team, index, ActionType.BALL)
         self.time = time
         self.direction = try_convert_direction(direction)
@@ -42,7 +42,7 @@ class TMCPMessage:
 
     @classmethod
     @type_check
-    def boost_action(cls, team: int, index: int, target: int):  # -> TMCPMessage:
+    def boost_action(cls, team: int, index: int, target: int):  # -> TGDSMELLSMessage:
         self = cls(team, index, ActionType.BOOST)
         self.target = target
         return self
@@ -51,7 +51,7 @@ class TMCPMessage:
     @type_check
     def demo_action(
         cls, team: int, index: int, target: int, time: float = -1.0
-    ):  # -> TMCPMessage:
+    ):  # -> TGDSMELLSMessage:
         self = cls(team, index, ActionType.DEMO)
         self.target = target
         self.time = time
@@ -59,26 +59,26 @@ class TMCPMessage:
 
     @classmethod
     @type_check
-    def ready_action(cls, team: int, index: int, time: float = -1.0):  # -> TMCPMessage:
+    def ready_action(cls, team: int, index: int, time: float = -1.0):  # -> TGDSMELLSMessage:
         self = cls(team, index, ActionType.READY)
         self.time = time
         return self
 
     @classmethod
     @type_check
-    def defend_action(cls, team: int, index: int):  # -> TMCPMessage:
+    def defend_action(cls, team: int, index: int):  # -> TGDSMELLSMessage:
         self = cls(team, index, ActionType.DEFEND)
         return self
 
     @classmethod
-    def from_dict(cls, message: dict) -> Optional["TMCPMessage"]:
+    def from_dict(cls, message: dict) -> Optional["TGDSMELLSMessage"]:
         try:
             team: int = message["team"]
             index: int = message["index"]
             assert isinstance(team, int)
             assert isinstance(index, int)
 
-            version = message["tmcp_version"]
+            version = message["tmcp_version"] # old versions will use the old name tmcp_version for this variable
             assert isinstance(version, (list, tuple))
             assert len(version) == 2
             
@@ -149,7 +149,7 @@ class TMCPMessage:
             raise NotImplementedError
 
         return {
-            "tmcp_version": TMCP_VERSION,
+            "tmcp_version": TGDSMELLS_VERSION,  # old versions will use the old name tmcp_version for this variablew
             "team": self.team,
             "index": self.index,
             "action": action,

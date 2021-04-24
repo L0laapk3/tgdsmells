@@ -5,31 +5,31 @@ from typing import List, Optional, Any
 from rlbot.agents.base_agent import BaseAgent
 from rlbot.matchcomms.client import MatchcommsClient
 
-from tmcp import TMCP_VERSION
-from .message import TMCPMessage
+from tgdsmells import TGDSMELLS_VERSION
+from .message import TGDSMELLSMessage
 
 
 MAX_PACKETS_PER_TICK: int = 30
 TIME_BETWEEN_MESSAGES: float = 0.1
 
 
-class TMCPHandler:
-    """The class for handling TMCP.
+class TGDSMELLSHandler:
+    """The class for handling TGDSMELLS.
 
     Create an instance by just passing your agent in:
 
     ```
     def initialize_agent(self):
-        self.tmcp_handler = TMCPHandler(self)
+        self.tgdsmells_handler = TGDSMELLSHandler(self)
     ```
 
     Usage is also very straightforward:
 
     ```
     def get_output(self, packet: GameTickPacket) -> SimpleControllerState:
-        # Receive and parse all new matchcomms messages into TMCPMessage objects.
-        new_messages: List[TMCPMessage] = self.tmcp_handler.recv()
-        # Handle TMCPMessages.
+        # Receive and parse all new matchcomms messages into TGDSMELLSMessage objects.
+        new_messages: List[TGDSMELLSMessage] = self.tgdsmells_handler.recv()
+        # Handle TGDSMELLSMessages.
         for message in new_messages:
             if message.action_type == ActionType.BALL:
                 print(message.time)
@@ -37,11 +37,11 @@ class TMCPHandler:
         ...
 
         # You can send messages like this.
-        self.tmcp_handler.send_boost_action(pad_index)
+        self.tgdsmells_handler.send_boost_action(pad_index)
 
         # Or you can create them and send them more directly:
-        my_message = TMCPMessage.ball_action(self.team, self.index, estimated_time_of_arrival)
-        self.tmcp_handler.send(my_message)
+        my_message = TGDSMELLSMessage.ball_action(self.team, self.index, estimated_time_of_arrival)
+        self.tgdsmells_handler.send(my_message)
     ```
     """
 
@@ -56,8 +56,8 @@ class TMCPHandler:
         """Disable the handler. It will not send or receive any messages."""
         self.enabled = False
 
-    def send(self, message: TMCPMessage) -> bool:
-        """Send a TMCPMessage over match comms. Will not send messages if they are coming too quickly.
+    def send(self, message: TGDSMELLSMessage) -> bool:
+        """Send a TGDSMELLSMessage over match comms. Will not send messages if they are coming too quickly.
         Returns whether a message was sent."""
 
         # If disabled, pretend all messages are sent.
@@ -69,12 +69,12 @@ class TMCPHandler:
         if current_time - self.last_time < TIME_BETWEEN_MESSAGES:
             return False
 
-        assert isinstance(message, TMCPMessage)
+        assert isinstance(message, TGDSMELLSMessage)
         self.matchcomms.outgoing_broadcast.put_nowait(message.to_dict())
         self.last_time: float = current_time
         return True
 
-    def recv(self) -> List[TMCPMessage]:
+    def recv(self) -> List[TGDSMELLSMessage]:
         messages = []
 
         # Return empty message list if disabled.
@@ -91,12 +91,12 @@ class TMCPHandler:
                 break
         return messages
 
-    def parse(self, message: dict) -> Optional[TMCPMessage]:
+    def parse(self, message: dict) -> Optional[TGDSMELLSMessage]:
         # Ignore messages by opposing team.
         if message.get("team") != self.team:
             return None
 
-        return TMCPMessage.from_dict(message)
+        return TGDSMELLSMessage.from_dict(message)
 
     def send_ball_action(
         self, time: Optional[float] = None, direction: Optional[Any] = None
@@ -111,14 +111,14 @@ class TMCPHandler:
             kwargs["time"] = time
         if direction is not None:
             kwargs["direction"] = direction
-        return self.send(TMCPMessage.ball_action(self.team, self.index, **kwargs))
+        return self.send(TGDSMELLSMessage.ball_action(self.team, self.index, **kwargs))
 
     def send_boost_action(self, target: int) -> bool:
         """The bot is going for boost.
 
         `target` - Index of the boost pad the bot is going to collect.
         """
-        return self.send(TMCPMessage.boost_action(self.team, self.index, target))
+        return self.send(TGDSMELLSMessage.boost_action(self.team, self.index, target))
 
     def send_demo_action(self, target: int, time: Optional[float] = None) -> bool:
         """The bot is going to demolish another car.
@@ -130,7 +130,7 @@ class TMCPHandler:
         if time is not None:
             kwargs["time"] = time
         return self.send(
-            TMCPMessage.demo_action(self.team, self.index, target, **kwargs)
+            TGDSMELLSMessage.demo_action(self.team, self.index, target, **kwargs)
         )
 
     def send_ready_action(self, time: Optional[float] = None) -> bool:
@@ -142,7 +142,7 @@ class TMCPHandler:
         kwargs = {}
         if time is not None:
             kwargs["time"] = time
-        return self.send(TMCPMessage.ready_action(self.team, self.index, **kwargs))
+        return self.send(TGDSMELLSMessage.ready_action(self.team, self.index, **kwargs))
 
     def send_defend_action(self) -> bool:
         """The bot is in a position to defend the goal and is not planning to move up.
@@ -151,4 +151,4 @@ class TMCPHandler:
 
         A bot should use "DEFEND" to let its teammates know it is safe to move up a bit without worrying about an open net.
         """
-        return self.send(TMCPMessage.defend_action(self.team, self.index))
+        return self.send(TGDSMELLSMessage.defend_action(self.team, self.index))
