@@ -6,7 +6,7 @@ with open("README.md", "r") as readme_file:
 setup(
     name="tgdsmells",
     packages=["tgdsmells"],
-    version="1.0.0",
+    version="1.0.0b",
     license="MIT",
     description="Helper classes for the Team Group Data Sharing Medium & Electronic Local Link System.",
     long_description=long_description,
@@ -14,7 +14,7 @@ setup(
     author="Viliam Vadocz",
     author_email="viliam.vadocz@gmail.com",
     url="https://github.com/L0laapk3/tgdsmells/",
-    download_url="https://github.com/ViliamVadocz/tmcp/archive/v_1_0_0.tar.gz",
+    download_url="https://github.com/L0laapk3/tgdsmells/releases/download/v_1_0_0b/tgdsmells-1.0.0b0.tar.gz",
     keywords=["RLBot", "protocol"],
     install_requires=["rlbot"],
     classifiers=[
