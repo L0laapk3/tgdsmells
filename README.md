@@ -6,7 +6,7 @@ Learn more about [TGDSMELLS](https://github.com/RLBot/RLBot/wiki/Team-Match-Comm
 
 ## Upgrading from TMCP
 
-Upgrading from TMCP to TGDSMELLS is simple. All you need to do is replace `tmcp` with `tgdsmells` in your requirements.txt, then replace `from tmcp import` with `from tgdsmells import`.
+Upgrading from TMCP to TGDSMELLS is simple. All you need to do is replace `tmcp` with `tgdsmells` in your requirements.txt, and update the terminology in your imports.
 
 ---
 
